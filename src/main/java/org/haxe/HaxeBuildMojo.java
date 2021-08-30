@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -55,16 +56,32 @@ public class HaxeBuildMojo extends AbstractMojo {
     private String[] args;
 
     /**
+     * Location of the hxml file.
+     */
+    @Parameter(defaultValue = "${project.basedir}", property = "workingDirectory", required = true)
+    private File workingDirectory;
+
+    /**
      * Location to put the generated classes.
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes", property = "output", required = true)
-    private File output;
+    @Parameter(defaultValue = "${project.build.directory}/classes", property = "destination", required = true)
+    private File destination;
 
     public void execute() throws MojoExecutionException {
         try {
+            
+            System.out.println(hxml.getCanonicalPath());
+            
             Hxml haxeConfig = readHxml();
-
-            Process haxeProc = Runtime.getRuntime().exec(ArrayUtils.addAll(new String[] { haxe, hxml.getCanonicalPath() }, args));
+            
+            File output = workingDirectory.toPath().resolve(haxeConfig.outputPath).toFile();
+            File outputDir = output.getParentFile();
+            if(!outputDir.exists()) outputDir.mkdirs();
+            
+            
+            Process haxeProc =  new ProcessBuilder(Arrays.asList(ArrayUtils.addAll(new String[] { haxe, hxml.getCanonicalPath() }, args)))
+                .directory(workingDirectory)
+                .start();
             
             inheritIO(haxeProc.getInputStream(), System.out);
             inheritIO(haxeProc.getErrorStream(), System.err);
@@ -78,7 +95,7 @@ public class HaxeBuildMojo extends AbstractMojo {
             // haxe-generated .class files into the final jar
             // Ideally there should be an option in haxe to produce these .class files
             // without packing into a jar
-            unzip(haxeConfig.outputPath.toFile(), output);
+            unzip(output, destination);
 
             // export a `haxe.mainClass` property which can be used by plugins in later phrases, for example:
             // <plugin>
@@ -95,7 +112,10 @@ public class HaxeBuildMojo extends AbstractMojo {
                 project.getProperties().setProperty("haxe.mainClass", haxeConfig.mainClass.toJavaClass());
             }
 
+        } catch (MojoExecutionException err) {
+            throw err;
         } catch (Exception err) {
+            err.printStackTrace();
             throw new MojoExecutionException("Failed to compile haxe", err);
         }
     }
@@ -113,7 +133,7 @@ public class HaxeBuildMojo extends AbstractMojo {
     //     return null;
     // }
 
-    private Hxml readHxml() throws FileNotFoundException, IOException {
+    private Hxml readHxml() throws MojoExecutionException, FileNotFoundException, IOException {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(hxml))) {
             String line;
@@ -126,7 +146,9 @@ public class HaxeBuildMojo extends AbstractMojo {
                     outputPath = line.substring(6);
                 }
             }
-
+            if(outputPath == null) 
+                throw new MojoExecutionException("--jvm flag not found in " + hxml.getCanonicalPath());
+                
             return new Hxml(Paths.get(outputPath), mainClass == null ? null : new HaxeClass(mainClass));
         }
     }
