@@ -17,16 +17,24 @@ import java.io.FileWriter;
 @Mojo(name = "setup", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class HaxeSetupMojo extends AbstractMojo {
     /**
-     * Location of the hxml file to write out the haxe compiler flags (mainly
-     * "--java-lib-extern")
+     * Location of the maven project pom.xml file
+     */
+    @Parameter(defaultValue = "${project.basedir}/pom.xml", property = "pom", required = true)
+    private File pom;
+
+    /**
+     * Location of the hxml file to write out the haxe compiler flags
+     * (mainly "--java-lib-extern")
      */
     @Parameter(defaultValue = "${project.basedir}/maven.hxml", property = "hxml", required = true)
     private File hxml;
 
     public void execute() throws MojoExecutionException {
         try {
-            Process proc = Runtime.getRuntime().exec(new String[] { "mvn", "dependency:build-classpath",
-                    "-Dmdep.outputFile=" + hxml.getCanonicalPath(), "-Dmdep.pathSeparator=" + File.pathSeparator });
+            Process proc = Runtime.getRuntime()
+                    .exec(new String[] { "mvn", "-f", pom.getCanonicalPath(), "dependency:build-classpath",
+                            "-Dmdep.outputFile=" + hxml.getCanonicalPath(),
+                            "-Dmdep.pathSeparator=" + File.pathSeparator });
             proc.waitFor();
 
             String content = Files.readString(hxml.toPath());
