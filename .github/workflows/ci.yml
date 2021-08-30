@@ -19,7 +19,7 @@ jobs:
         uses: lix-pm/setup-lix@master
         
       - name: Install Haxe
-        uses: lix download
+        run: lix download
         
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
