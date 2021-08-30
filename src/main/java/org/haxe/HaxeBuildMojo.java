@@ -112,9 +112,7 @@ public class HaxeBuildMojo extends AbstractMojo {
                 project.getProperties().setProperty("haxe.mainClass", haxeConfig.mainClass.toJavaClass());
             }
 
-        } catch (MojoExecutionException err) {
-            throw err;
-        } catch (Exception err) {
+        } catch (IOException|InterruptedException err) {
             err.printStackTrace();
             throw new MojoExecutionException("Failed to compile haxe", err);
         }
@@ -133,7 +131,7 @@ public class HaxeBuildMojo extends AbstractMojo {
     //     return null;
     // }
 
-    private Hxml readHxml() throws MojoExecutionException, FileNotFoundException, IOException {
+    private Hxml readHxml() throws MojoExecutionException, IOException {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(hxml))) {
             String line;
@@ -154,7 +152,7 @@ public class HaxeBuildMojo extends AbstractMojo {
     }
 
     // https://www.baeldung.com/java-compress-and-uncompress#unzip
-    private static void unzip(File zip, File output) throws FileNotFoundException, IOException {
+    private static void unzip(File zip, File output) throws IOException {
         byte[] buffer = new byte[1024];
         
         try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zip))) {

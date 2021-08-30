@@ -9,7 +9,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Goal which creates a hxml containing `--java-lib-extern` flags for Haxe to consume
@@ -51,7 +53,7 @@ public class HaxeSetupMojo extends AbstractMojo {
                     }
                 }
             }
-        } catch (Exception err) {
+        } catch (IOException|InterruptedException err) {
             err.printStackTrace();
             throw new MojoExecutionException("Failed to setup hxml", err);
         }
