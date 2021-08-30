@@ -31,11 +31,17 @@ public class HaxeSetupMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
         try {
+            System.out.println(pom.getCanonicalPath());
+            System.out.println(hxml.getCanonicalPath());
+            
             Process proc = Runtime.getRuntime()
                     .exec(new String[] { "mvn", "-f", pom.getCanonicalPath(), "dependency:build-classpath",
                             "-Dmdep.outputFile=" + hxml.getCanonicalPath(),
                             "-Dmdep.pathSeparator=" + File.pathSeparator });
-            proc.waitFor();
+                            
+            if(proc.waitFor() != 0) {
+                throw new MojoExecutionException(new String(proc.getErrorStream().readAllBytes()));
+            }
 
             String content = Files.readString(hxml.toPath());
             try (FileWriter writer = new FileWriter(hxml)) {
