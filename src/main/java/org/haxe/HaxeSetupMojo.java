@@ -40,7 +40,9 @@ public class HaxeSetupMojo extends AbstractMojo {
             String content = Files.readString(hxml.toPath());
             try (FileWriter writer = new FileWriter(hxml)) {
                 for (String path : content.split(File.pathSeparator)) {
-                    writer.write("--java-lib-extern " + path + "\n");
+                    if(!path.isBlank()) {
+                        writer.write("--java-lib-extern " + path + "\n");
+                    }
                 }
             }
         } catch (Exception err) {
