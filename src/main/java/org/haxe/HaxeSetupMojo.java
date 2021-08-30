@@ -40,9 +40,15 @@ public class HaxeSetupMojo extends AbstractMojo {
                     .exec(new String[] { "mvn", "-f", pom.getCanonicalPath(), "dependency:build-classpath",
                             "-Dmdep.outputFile=" + hxml.getCanonicalPath(),
                             "-Dmdep.pathSeparator=" + File.pathSeparator });
-                            
-            if(proc.waitFor() != 0) {
-                throw new MojoExecutionException(new String(proc.getErrorStream().readAllBytes()));
+                   
+            int code = proc.waitFor();
+            if(code != 0) {
+                String stdout = new String(proc.getInputStream().readAllBytes());
+                String stderr = new String(proc.getErrorStream().readAllBytes());
+                System.out.println("Failed to invoke mvn, code:" + code);
+                System.out.println("stdout:\n" + stdout);
+                System.out.println("stderr:\n" + stderr);
+                throw new MojoExecutionException(stderr);
             }
 
             String content = Files.readString(hxml.toPath());
@@ -54,8 +60,6 @@ public class HaxeSetupMojo extends AbstractMojo {
                 }
             }
         } catch (IOException|InterruptedException err) {
-            System.out.println(err.getClass().getName());
-            System.out.println(err.getMessage());
             err.printStackTrace();
             throw new MojoExecutionException("Failed to setup hxml", err);
         }
