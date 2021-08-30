@@ -29,7 +29,7 @@ import java.io.InputStream;
  * Goal which compiles Haxe sources into java bytecode
  */
 @Mojo(name = "build", defaultPhase = LifecyclePhase.COMPILE)
-public class HaxeJvmBuildMojo extends AbstractMojo {
+public class HaxeBuildMojo extends AbstractMojo {
     /**
      * The maven project.
      */

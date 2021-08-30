@@ -15,7 +15,7 @@ import java.io.FileWriter;
  * Goal which creates a hxml containing `--java-lib-extern` flags for Haxe to consume
  */
 @Mojo(name = "setup", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class HaxeJvmSetupMojo extends AbstractMojo {
+public class HaxeSetupMojo extends AbstractMojo {
     /**
      * Location of the hxml file to write out the haxe compiler flags (mainly
      * "--java-lib-extern")
