@@ -46,6 +46,7 @@ public class HaxeSetupMojo extends AbstractMojo {
                 }
             }
         } catch (Exception err) {
+            err.printStackTrace();
             throw new MojoExecutionException("Failed to setup hxml", err);
         }
     }
