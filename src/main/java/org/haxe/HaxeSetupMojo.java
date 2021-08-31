@@ -9,7 +9,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -40,15 +39,12 @@ public class HaxeSetupMojo extends AbstractMojo {
                     .exec(new String[] { "mvn", "-f", pom.getCanonicalPath(), "dependency:build-classpath",
                             "-Dmdep.outputFile=" + hxml.getCanonicalPath(),
                             "-Dmdep.pathSeparator=" + File.pathSeparator });
-                   
-            int code = proc.waitFor();
-            if(code != 0) {
-                String stdout = new String(proc.getInputStream().readAllBytes());
-                String stderr = new String(proc.getErrorStream().readAllBytes());
-                System.out.println("Failed to invoke mvn, code:" + code);
-                System.out.println("stdout:\n" + stdout);
-                System.out.println("stderr:\n" + stderr);
-                throw new MojoExecutionException(stderr);
+                            
+            Util.inheritIO(proc.getInputStream(), System.out);
+            Util.inheritIO(proc.getErrorStream(), System.err);
+            
+            if(proc.waitFor() != 0) {
+                throw new MojoExecutionException("Failed to invoke mvn");
             }
 
             String content = Files.readString(hxml.toPath());

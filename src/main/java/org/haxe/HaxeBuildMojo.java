@@ -1,11 +1,9 @@
 package org.haxe;
 
 import java.io.BufferedReader;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -20,11 +18,9 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Goal which compiles Haxe sources into java bytecode
@@ -83,8 +79,8 @@ public class HaxeBuildMojo extends AbstractMojo {
                 .directory(workingDirectory)
                 .start();
             
-            inheritIO(haxeProc.getInputStream(), System.out);
-            inheritIO(haxeProc.getErrorStream(), System.err);
+            Util.inheritIO(haxeProc.getInputStream(), System.out);
+            Util.inheritIO(haxeProc.getErrorStream(), System.err);
 
             if (haxeProc.waitFor() != 0) {
                 throw new MojoExecutionException(
@@ -196,18 +192,6 @@ public class HaxeBuildMojo extends AbstractMojo {
         }
 
         return destFile;
-    }
-    
-    private static void inheritIO(final InputStream src, final PrintStream dest) {
-        new Thread(new Runnable() {
-            public void run() {
-                try(Scanner scanner = new Scanner(src)) {
-                    while (scanner.hasNextLine()) {
-                        dest.println(scanner.nextLine());
-                    }
-                }
-            }
-        }).start();
     }
 }
 
