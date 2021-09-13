@@ -1,4 +1,4 @@
-package org.haxe;
+package com.kevinresol;
 
 import java.nio.file.Files;
 
@@ -32,8 +32,8 @@ public class HaxeSetupMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
         try {
-            System.out.println(pom.getCanonicalPath());
-            System.out.println(hxml.getCanonicalPath());
+            // System.out.println(pom.getCanonicalPath());
+            // System.out.println(hxml.getCanonicalPath());
             
             Process proc = Runtime.getRuntime()
                     .exec(new String[] { "mvn", "-f", pom.getCanonicalPath(), "dependency:build-classpath",

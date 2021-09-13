@@ -1,4 +1,4 @@
-package org.haxe;
+package com.kevinresol;
 
 import java.io.BufferedReader;
 import java.nio.file.Path;
@@ -66,7 +66,7 @@ public class HaxeBuildMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             
-            System.out.println(hxml.getCanonicalPath());
+            // System.out.println(hxml.getCanonicalPath());
             
             Hxml haxeConfig = readHxml();
             

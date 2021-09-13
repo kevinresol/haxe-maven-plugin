@@ -1,4 +1,4 @@
-package org.haxe;
+package com.kevinresol;
 
 import java.io.InputStream;
 import java.io.PrintStream;

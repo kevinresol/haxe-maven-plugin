@@ -1,4 +1,4 @@
-package org.haxe;
+package com.kevinresol;
 
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
@@ -8,7 +8,9 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import java.io.File;
 
-public class HaxeSetupMojoTest {
+import com.kevinresol.HaxeBuildMojo;
+
+public class HaxeBuildMojoTest {
     @Rule
     public MojoRule rule = new MojoRule() {
         @Override
@@ -24,18 +26,21 @@ public class HaxeSetupMojoTest {
      * @throws Exception if any
      */
     @Test
-    public void testSetup() throws Exception {
+    public void testBuild() throws Exception {
         File pom = new File("target/test-classes/project-to-test/");
         assertNotNull(pom);
         assertTrue(pom.exists());
 
-        HaxeSetupMojo mojo = (HaxeSetupMojo) rule.lookupConfiguredMojo(pom, "setup");
+        HaxeBuildMojo mojo = (HaxeBuildMojo) rule.lookupConfiguredMojo(pom, "build");
         assertNotNull(mojo);
         mojo.execute();
 
-        File destination = (File) rule.getVariableValueFromObject(mojo, "hxml");
+        File destination = (File) rule.getVariableValueFromObject(mojo, "destination");
         assertNotNull(destination);
         assertTrue(destination.exists());
+
+        File main = new File( destination, "haxe/root/Main.class" );
+        assertTrue( main.exists() );
 
     }
 
