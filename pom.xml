@@ -6,18 +6,14 @@
 
   <groupId>com.kevinresol</groupId>
   <artifactId>haxe-maven-plugin</artifactId>
-  <!-- <version>1.0-SNAPSHOT</version> -->
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <scm>
     <url>https://github.com/kevinresol/haxe-maven-plugin</url>
   </scm>
 
   <name>Haxe JVM Maven Plugin</name>
-
-  <!-- FIXME change it to the project's website -->
-  <url>https://haxe.org</url>
-
+  
   <prerequisites>
     <maven>${maven.version}</maven>
   </prerequisites>
@@ -29,6 +25,14 @@
     <maven.version>3.3.9</maven.version>
     <github.global.server>github</github.global.server>
   </properties>
+  
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/kevinresol/haxe-maven-plugin</url>
+    </repository>
+  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -79,15 +83,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-  <distributionManagement>
-    <repository>
-      <id>internal.repo</id>
-      <name>Temporary Staging Repository</name>
-      <url>file://${project.build.directory}/mvn-repo</url>
-    </repository>
-  </distributionManagement>
 
   <build>
     <pluginManagement>
@@ -153,37 +148,6 @@
             <goals>
               <goal>helpmojo</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.12</version>
-        <configuration>
-          <message>Maven artifacts for ${project.version}</message>
-          <branch>refs/heads/mvn-repo</branch>
-          <noJekyll>true</noJekyll>
-          <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-          <includes>
-            <include>**/*</include>
-          </includes>
-          <merge>true</merge>
-          <repositoryOwner>kevinresol</repositoryOwner>
-          <repositoryName>haxe-maven-plugin</repositoryName>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>site</goal>
-            </goals>
-            <phase>deploy</phase>
           </execution>
         </executions>
       </plugin>
